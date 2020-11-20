@@ -6,9 +6,21 @@
 #include <unistd.h>
 
 static enum MHD_Result
-handler(void *ctx, struct MHD_Connection *conn, const char *url, const char
-    *method, const char *version, const char *upload_data, size_t
-    *upload_data_size, void **con_ctx) {
+handler(void *ctx,
+    struct MHD_Connection *conn,
+    const char *url,
+    const char *method,
+    const char *version,
+    const char *upload_data,
+    size_t *upload_data_size,
+    void **con_ctx) {
+  (void)url;
+  (void)method;
+  (void)version;
+  (void)upload_data;
+  (void)upload_data_size;
+  (void)con_ctx;
+
   int fd = open(ctx, O_RDONLY);
   if (fd < 0) {
     return MHD_NO;
@@ -38,7 +50,9 @@ main(int argc, const char **argv) {
   }
   int port = (argc >= 3) ? atoi(argv[2]) : 8888;
   struct MHD_Daemon *d = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION, port,
-      NULL, NULL, &handler, (void*)file, MHD_OPTION_END);
+      NULL, NULL,
+      &handler, (void*)file,
+      MHD_OPTION_END);
   if (!d) {
     fprintf(stderr, "ERROR\n");
     exit(3);
