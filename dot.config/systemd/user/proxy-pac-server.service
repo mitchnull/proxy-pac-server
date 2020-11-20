@@ -1,0 +1,11 @@
+[Unit]
+Description=Serve proxy.pac file on localhost:8888
+
+[Service]
+ExecStart=/home/mitch/bin/proxy-pac-server /home/mitch/.config/proxy.pac 8888
+Restart=always
+TimeoutStopSec=1s
+KillSignal=TERM
+
+[Install]
+WantedBy=multi-user.target
