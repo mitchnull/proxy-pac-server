@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <errno.h>
 
 static enum MHD_Result
 handler(void *ctx,
@@ -49,12 +52,22 @@ main(int argc, const char **argv) {
     exit(2);
   }
   int port = (argc >= 3) ? atoi(argv[2]) : 8888;
+
+  struct sockaddr_in bindAddress = {
+    .sin_family = AF_INET,
+    .sin_port = htons(port),
+    .sin_addr = {
+      .s_addr = htonl(INADDR_LOOPBACK)
+    }
+  };
+
   struct MHD_Daemon *d = MHD_start_daemon(MHD_USE_THREAD_PER_CONNECTION, port,
       NULL, NULL,
       &handler, (void*)file,
+      MHD_OPTION_SOCK_ADDR, (struct sockaddr *)&bindAddress,
       MHD_OPTION_END);
   if (!d) {
-    fprintf(stderr, "ERROR\n");
+    fprintf(stderr, "ERROR: %s\n", strerror(errno));
     exit(3);
   }
   while (1) {
